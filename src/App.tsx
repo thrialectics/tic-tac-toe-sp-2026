@@ -1,18 +1,70 @@
-import { useState } from "react";
-import { createGame, makeMove } from "./tic-tac-toe";
+import { useState, useEffect } from "react";
+import confetti from "canvas-confetti"; 
+import { createGame, makeMove, getWinner } from "./tic-tac-toe";                                      
 
 function App() {
   let [gameState, setGameState] = useState(getInitialGame())
 
-  // TODO: display the gameState, and call `makeMove` when a player clicks a button
-  return <div>Hello World! current player: {gameState.currentPlayer}</div>;
+  function handleCellClick(position: number) {                                  
+    try {                                                                       
+      const newState = makeMove(gameState, position);                           
+      setGameState(newState);                                                   
+    } catch (e) {                                                               
+      // ignore invalid moves                                                   
+    }                                                                           
+  }      
+
+  const winner = getWinner(gameState);
+
+  useEffect(() => { 
+    console.log("Winner changed:", winner);                                                            
+    if (winner) {                                                               
+      confetti({                                                                
+        particleCount: 100,                                                     
+        spread: 70,                                                             
+        origin: { y: 0.6 }                                                      
+      });                                                                       
+    }                                                                           
+  }, [winner]);
+
+  return (
+    <div style={{                                                               
+      display: "flex",                                                          
+      flexDirection: "column",                                                  
+      alignItems: "center",                                                     
+      justifyContent: "center",                                                 
+      height: "100vh"                                                           
+    }}>Tic Tac Toe 
+    <p>current player: {gameState.currentPlayer}</p>
+    <table>                                                                       
+      <tbody>                                                                     
+        {[0, 1, 2].map(row => (                                                   
+          <tr key={row}>                                                          
+            {[0, 1, 2].map(col => {                                               
+              const position = row * 3 + col;                                     
+              return (                                                            
+                <td key={position} onClick={() => handleCellClick(position)}>     
+                  {gameState.board[position] ?? "_"}                              
+                </td>                                                             
+              );                                                                  
+            })}                                                                   
+          </tr>                                                                   
+        ))}                                                                       
+      </tbody>                                                                    
+    </table> 
+    <br></br>
+    {getWinner(gameState) && (
+      <div>Winner: {getWinner(gameState)}</div>
+    )}
+    <br></br>
+    <button onClick={() => setGameState(createGame())}>                           
+      New Game                                                                    
+    </button>   
+    </div>);
 }
 
-function getInitialGame() {
-  let initialGameState = createGame()
-  initialGameState = makeMove(initialGameState, 3)
-  initialGameState = makeMove(initialGameState, 0)
-  return initialGameState
-}
+function getInitialGame() {                                                   
+    return createGame()                                                         
+} 
 
 export default App;
