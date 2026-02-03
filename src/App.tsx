@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import confetti from "canvas-confetti"; 
-import { createGame, makeMove, getWinner } from "./tic-tac-toe";
+import { createGame, makeMove, getWinner, isDraw } from "./tic-tac-toe";
 import "./App.css";                                      
 
 function App() {
@@ -10,8 +10,7 @@ function App() {
     try {                                                                       
       const newState = makeMove(gameState, position);                           
       setGameState(newState);                                                   
-    } catch (e) {                                                               
-      // ignore invalid moves                                                   
+    } catch (e) {                                                   
     }                                                                           
   }      
 
@@ -37,7 +36,13 @@ function App() {
       height: "100vh"                                                           
     }}>
     <h1>Tic Tac Toe</h1>
-    <p>current player: {gameState.currentPlayer}</p>
+    {winner ? (                                                                   
+      <div className="winner">Winner: {winner}</div>                              
+    ) : isDraw(gameState) ? (                                                                
+      <div>It's a draw!</div>                                                     
+    ) : (                                                                         
+      <p>Current player: {gameState.currentPlayer}</p>                            
+    )} 
     <table>                                                                       
       <tbody>                                                                     
         {[0, 1, 2].map(row => (                                                   
@@ -54,9 +59,6 @@ function App() {
         ))}                                                                       
       </tbody>                                                                    
     </table> 
-    {getWinner(gameState) && (
-      <div className="winner">Winner: {getWinner(gameState)}</div>
-    )}
     <br></br>
     <button onClick={() => setGameState(createGame())}>                           
       New Game                                                                    
