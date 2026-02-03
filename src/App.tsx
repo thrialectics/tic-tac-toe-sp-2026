@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import confetti from "canvas-confetti"; 
-import { createGame, makeMove, getWinner } from "./tic-tac-toe";                                      
+import { createGame, makeMove, getWinner } from "./tic-tac-toe";
+import "./App.css";                                      
 
 function App() {
   let [gameState, setGameState] = useState(getInitialGame())
@@ -34,7 +35,8 @@ function App() {
       alignItems: "center",                                                     
       justifyContent: "center",                                                 
       height: "100vh"                                                           
-    }}>Tic Tac Toe 
+    }}>
+    <h1>Tic Tac Toe</h1>
     <p>current player: {gameState.currentPlayer}</p>
     <table>                                                                       
       <tbody>                                                                     
@@ -52,9 +54,8 @@ function App() {
         ))}                                                                       
       </tbody>                                                                    
     </table> 
-    <br></br>
     {getWinner(gameState) && (
-      <div>Winner: {getWinner(gameState)}</div>
+      <div className="winner">Winner: {getWinner(gameState)}</div>
     )}
     <br></br>
     <button onClick={() => setGameState(createGame())}>                           
