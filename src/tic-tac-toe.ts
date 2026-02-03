@@ -14,14 +14,14 @@ export type Board = [Cell, Cell, Cell, Cell, Cell, Cell, Cell, Cell, Cell];
 export type GameState = {
   board: Board;
   currentPlayer: Player;
+  winner: Player | null;
 };
 
 export function createGame(): GameState {
-
   return {
-
     board: [null, null, null, null, null, null, null, null, null],
     currentPlayer: "X",
+    winner: null,
   };
 }
 
@@ -38,21 +38,33 @@ export function makeMove(state: GameState, position: number): GameState {
     throw new Error("Position is already occupied");                                            
   }
 
-  if (getWinner(state) !== null) {                                              
-    throw new Error("Game is already over");                                    
-  }   
+  const winner = getWinner(state);
+  if (winner !== null) {
+    throw new Error("Game is already over");
+  }
 
   const newBoard = [...state.board] as Board;
   newBoard[position] = state.currentPlayer;
 
-  return {
+  const newState: GameState = {
     board: newBoard,
-    currentPlayer: state.currentPlayer === "X" ? "O" : "X"
-  };
+    currentPlayer: state.currentPlayer === "X" ? "O" : "X",
+    winner: null as (Player | null),
+  }
+
+  newState.winner = getWinner(newState);
+
+  return newState;
 }
 
+export function isDraw(state: GameState): boolean {                           
+    return getWinner(state) === null && state.board.every(cell => cell !==      
+  null);                                                                        
+  }
+  
 export function getWinner(state: GameState): Player | null {
   const board = state.board;
+
   const winningCombos = [                                                       
     [0, 1, 2], [3, 4, 5], [6, 7, 8],  // rows                                   
     [0, 3, 6], [1, 4, 7], [2, 5, 8],  // columns                                
