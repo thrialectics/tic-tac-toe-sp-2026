@@ -1,0 +1,312 @@
+================================================================================
+CLEAN CODE REVIEW
+================================================================================
+
+YOUR CURRENT CODE - ISSUES FOUND:
+
+tic-tac-toe.ts:
+---------------
+1. Inconsistent indentation - isDraw uses 4 spaces, rest uses 2
+2. Line 34: Missing semicolon after error message
+3. Line 52: Unnecessary cast `null as (Player | null)` - just `null` works
+4. Line 61-62: Awkward line break in middle of expression
+5. Validation order: checking bounds before checking if integer (minor)
+6. Line 41-44: Calls getWinner(state) but could use state.winner if it existed before move
+7. Functions defined out of logical order (isDraw between makeMove and getWinner)
+
+App.tsx:
+--------
+1. Line 7: `let` should be `const` - useState return never gets reassigned
+2. Line 13-14: Empty catch block silently swallows errors - bad practice
+3. Line 17: Calls getWinner() but winner is already in gameState.winner
+4. Line 20: Debug console.log left in production code
+5. Line 41: Calls isDraw() but could be part of GameState
+6. Line 62: `<br></br>` is non-idiomatic, use margin/padding instead
+7. Lines 69-71: getInitialGame() is unnecessary wrapper - just use createGame()
+8. Inconsistent spacing and indentation throughout
+
+
+================================================================================
+CLEAN VERSION: tic-tac-toe.ts
+================================================================================
+
+export type Player = "X" | "O";
+
+export type Cell = Player | null;
+
+// Board is a 3x3 grid, represented as a 9-element array.
+// Indices map to positions:
+//  0 | 1 | 2
+//  ---------
+//  3 | 4 | 5
+//  ---------
+//  6 | 7 | 8
+export type Board = [Cell, Cell, Cell, Cell, Cell, Cell, Cell, Cell, Cell];
+
+export type GameState = {
+  board: Board;
+  currentPlayer: Player;
+  winner: Player | null;
+  isDraw: boolean;
+};
+
+const WINNING_COMBOS = [
+  [0, 1, 2], [3, 4, 5], [6, 7, 8],  // rows
+  [0, 3, 6], [1, 4, 7], [2, 5, 8],  // columns
+  [0, 4, 8], [2, 4, 6],             // diagonals
+] as const;
+
+export function createGame(): GameState {
+  return {
+    board: [null, null, null, null, null, null, null, null, null],
+    currentPlayer: "X",
+    winner: null,
+    isDraw: false,
+  };
+}
+
+export function makeMove(state: GameState, position: number): GameState {
+  // Validate position is an integer
+  if (!Number.isInteger(position)) {
+    throw new Error("Position must be an integer");
+  }
+
+  // Validate position is in bounds
+  if (position < 0 || position > 8) {
+    throw new Error("Position must be between 0 and 8");
+  }
+
+  // Validate position is not occupied
+  if (state.board[position] !== null) {
+    throw new Error("Position is already occupied");
+  }
+
+  // Validate game is not over
+  if (state.winner !== null || state.isDraw) {
+    throw new Error("Game is already over");
+  }
+
+  // Create new board with the move
+  const newBoard = [...state.board] as Board;
+  newBoard[position] = state.currentPlayer;
+
+  // Compute new state
+  const nextPlayer = state.currentPlayer === "X" ? "O" : "X";
+  const winner = computeWinner(newBoard);
+  const isDraw = winner === null && newBoard.every(cell => cell !== null);
+
+  return {
+    board: newBoard,
+    currentPlayer: nextPlayer,
+    winner,
+    isDraw,
+  };
+}
+
+export function getWinner(state: GameState): Player | null {
+  return state.winner;
+}
+
+export function isDraw(state: GameState): boolean {
+  return state.isDraw;
+}
+
+// Internal helper - computes winner from board
+function computeWinner(board: Board): Player | null {
+  for (const [a, b, c] of WINNING_COMBOS) {
+    if (board[a] !== null && board[a] === board[b] && board[b] === board[c]) {
+      return board[a];
+    }
+  }
+  return null;
+}
+
+
+================================================================================
+CLEAN VERSION: App.tsx
+================================================================================
+
+import { useState, useEffect } from "react";
+import confetti from "canvas-confetti";
+import { createGame, makeMove } from "./tic-tac-toe";
+import type { GameState } from "./tic-tac-toe";
+import "./App.css";
+
+function App() {
+  const [gameState, setGameState] = useState<GameState>(createGame);
+
+  const { winner, isDraw, currentPlayer, board } = gameState;
+
+  function handleCellClick(position: number) {
+    try {
+      const newState = makeMove(gameState, position);
+      setGameState(newState);
+    } catch (error) {
+      // Invalid moves are silently ignored (clicked occupied cell, game over, etc.)
+    }
+  }
+
+  function handleNewGame() {
+    setGameState(createGame());
+  }
+
+  useEffect(() => {
+    if (winner) {
+      confetti({
+        particleCount: 100,
+        spread: 70,
+        origin: { y: 0.6 },
+      });
+    }
+  }, [winner]);
+
+  return (
+    <div className="game-container">
+      <h1>Tic Tac Toe</h1>
+
+      <GameStatus winner={winner} isDraw={isDraw} currentPlayer={currentPlayer} />
+
+      <table>
+        <tbody>
+          {[0, 1, 2].map((row) => (
+            <tr key={row}>
+              {[0, 1, 2].map((col) => {
+                const position = row * 3 + col;
+                return (
+                  <td key={position} onClick={() => handleCellClick(position)}>
+                    {board[position] ?? "_"}
+                  </td>
+                );
+              })}
+            </tr>
+          ))}
+        </tbody>
+      </table>
+
+      <button onClick={handleNewGame} className="new-game-button">
+        New Game
+      </button>
+    </div>
+  );
+}
+
+// Extracted component for game status display
+function GameStatus({
+  winner,
+  isDraw,
+  currentPlayer
+}: {
+  winner: string | null;
+  isDraw: boolean;
+  currentPlayer: string;
+}) {
+  if (winner) {
+    return <div className="winner">Winner: {winner}</div>;
+  }
+  if (isDraw) {
+    return <div className="draw">It's a draw!</div>;
+  }
+  return <p className="current-player">Current player: {currentPlayer}</p>;
+}
+
+export default App;
+
+
+================================================================================
+CLEAN VERSION: App.css (suggested updates)
+================================================================================
+
+.game-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+}
+
+h1 {
+  font-size: 36px;
+  margin-bottom: 10px;
+}
+
+.current-player {
+  font-size: 20px;
+  margin: 10px 0;
+}
+
+.winner {
+  font-size: 28px;
+  font-weight: bold;
+  color: #4caf50;
+  margin: 10px 0;
+}
+
+.draw {
+  font-size: 24px;
+  font-weight: bold;
+  color: #ff9800;
+  margin: 10px 0;
+}
+
+table {
+  margin: 20px 0;
+  border-collapse: collapse;
+}
+
+td {
+  width: 80px;
+  height: 80px;
+  font-size: 48px;
+  text-align: center;
+  border: 2px solid #333;
+  cursor: pointer;
+}
+
+td:hover {
+  background-color: #f0f0f0;
+}
+
+.new-game-button {
+  margin-top: 20px;
+  padding: 10px 20px;
+  font-size: 18px;
+  cursor: pointer;
+}
+
+
+================================================================================
+KEY IMPROVEMENTS EXPLAINED
+================================================================================
+
+1. CONST OVER LET
+   - `const [gameState, setGameState]` - the array reference never changes
+
+2. DESTRUCTURING
+   - `const { winner, isDraw, currentPlayer, board } = gameState;`
+   - Cleaner access, makes dependencies clear
+
+3. STATE CONTAINS COMPUTED VALUES
+   - winner and isDraw computed in makeMove, stored in state
+   - No redundant getWinner() calls in the UI
+
+4. EXTRACTED COMPONENT
+   - GameStatus is its own component
+   - Single responsibility, easier to test and modify
+
+5. WINNING_COMBOS AS CONST
+   - Defined once at module level, not recreated each call
+   - `as const` gives better type inference
+
+6. COMMENTS ON CATCH BLOCK
+   - Empty catch blocks should explain WHY they're empty
+
+7. CSS CLASSES OVER INLINE STYLES
+   - Separation of concerns
+   - Easier to maintain and modify
+
+8. REMOVED UNNECESSARY WRAPPER
+   - getInitialGame() just called createGame() - removed indirection
+
+9. CONSISTENT FORMATTING
+   - Same indentation throughout
+   - Consistent semicolons and spacing
