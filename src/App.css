@@ -6,33 +6,50 @@
   height: 100vh;
 }
 
+body {
+  background: #fdfcfa;
+  font-family: Georgia, serif;
+  color: #4a5a6a;
+  line-height: 1.6;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.5rem;
+  touch-action: manipulation; /* Prevents double-tap zoom but keeps pinch zoom */
+}
+
 h1 {
-  font-size: 36px;
+  color: #1a4a5e;
+  font-size: 3rem;
   margin-bottom: 10px;
 }
 
 .current-player {
+  font-family: Georgia, serif;
   font-size: 20px;
+  color: #7b6d8d;
   margin: 10px 0;
 }
 
 .winner {
   font-size: 28px;
   font-weight: bold;
-  color: #4caf50;
+  color: #1a4a5e;
   margin: 10px 0;
 }
 
 .draw {
   font-size: 24px;
   font-weight: bold;
-  color: #ff9800;
+  color: #1a4a5e;
   margin: 10px 0;
 }
 
 table {
   margin: 20px 0;
-  border-collapse: collapse;
+  border-collapse: separate;
+  border-spacing: 0;
 }
 
 td {
@@ -40,7 +57,7 @@ td {
   height: 80px;
   font-size: 48px;
   text-align: center;
-  border: 2px solid #333;
+  border: 1px solid #f5f3f0;
   cursor: pointer;
 }
 
@@ -48,9 +65,35 @@ td:hover {
   background-color: #f0f0f0;
 }
 
+tr:first-child td:first-child {
+  border-top-left-radius: 8px;
+}
+
+tr:first-child td:last-child {
+  border-top-right-radius: 8px;
+}
+
+tr:last-child td:first-child {
+  border-bottom-left-radius: 8px;
+}
+
+tr:last-child td:last-child {
+  border-bottom-right-radius: 8px;
+}
+
 .new-game-button {
-  margin-top: 20px;
-  padding: 10px 20px;
-  font-size: 18px;
+  display: block;
+  margin: 2rem auto;
+  padding: 1rem 2rem;
+  background: #7b6d8d;
+  color: #fdfcfa;
+  border: none;
+  font-size: 1rem;
   cursor: pointer;
+  transition: background 0.3s ease;
+  font-family: Georgia, serif;
+}
+
+.new-game-button:hover {
+  background: #5d5273;
 }
