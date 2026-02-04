@@ -2,12 +2,16 @@ import { useState, useEffect } from "react";
 import confetti from "canvas-confetti"; 
 import { createGame, makeMove } from "./tic-tac-toe";
 import type { GameState } from "./tic-tac-toe";
-import "./App.css";                                      
+import "./App.css";
+import serpentImg from "./serpent.png";  
+import doveImg from "./dove.png";                               
 
 function App() {
   const [gameState, setGameState] = useState<GameState>(createGame);
 
   const { winner, isDraw, currentPlayer, board } = gameState;
+
+  const icons = { "X": <img src={serpentImg} />, "O": <img src={doveImg} /> };
 
   function handleCellClick(position: number) {                                  
     try {                                                                       
@@ -34,7 +38,7 @@ function App() {
 
   return (
     <div className="game-container">
-      <h1>Tic Tac Toe</h1>
+      <h1>Tic Tac Serpent/Dove</h1>
 
       <GameStatus winner={winner} isDraw={isDraw} currentPlayer={currentPlayer} />
 
@@ -46,7 +50,7 @@ function App() {
                 const position = row * 3 + col;                                     
                 return (                                                            
                   <td key={position} onClick={() => handleCellClick(position)}>     
-                    {board[position] ?? " "}                              
+                    {board[position] && icons[board[position]]}                              
                   </td>                                                             
                 );                                                                  
               })}                                                                   
@@ -67,17 +71,19 @@ function GameStatus({
   isDraw,
   currentPlayer
 }: {
-  winner: string | null;
+  winner: "X" | "O" | null;
   isDraw: boolean;
-  currentPlayer: string;
+  currentPlayer: "X" | "O";
 }) {
+  const names = { "X": "Serpent", "O": "Dove" };
+  
   if (winner) {
-    return <div className="winner">Winner: {winner}</div>;
+    return <div className="winner">Winner: {names[winner]}</div>;
   }
   if (isDraw) {
     return <div className="draw">It's a draw!</div>;
   }
-  return <p className="current-player">Current player: {currentPlayer}</p>;
+  return <p className="current-player">Current Player: {names[currentPlayer]}</p>;
 }
 
 export default App;
