@@ -1,44 +1,80 @@
 import { useState, useEffect } from "react";
 import confetti from "canvas-confetti"; 
-import { createGame, makeMove } from "./tic-tac-toe";
 import type { GameState } from "./tic-tac-toe";
 import "./App.css";
-import serpentImg from "./serpent.png";  
-import doveImg from "./dove.png";                               
+import serpentImg from "./assets/serpent.png";  
+import doveImg from "./assets/dove.png";                               
 
 function App() {
-  const [gameState, setGameState] = useState<GameState>(createGame);
+  const [gameState, setGameState] = useState<GameState | null>(null);
 
-  const { winner, isDraw, currentPlayer, board } = gameState;
+  useEffect(() => {
+    const fetchGameState = async () => {
+      try {
+        const response = await fetch("/api/game");
+        const newGameState = await response.json();
+        setGameState(newGameState);
+      } catch (error) {
+        console.error('Error fetching game', error);
+      }
+    }
 
-  const icons = { "X": <img src={serpentImg} />, "O": <img src={doveImg} /> };
-
-  function handleCellClick(position: number) {                                  
-    try {                                                                       
-      const newState = makeMove(gameState, position);                           
-      setGameState(newState);                                                   
-    } catch (error) {
-      // Invalid moves silently ignored                                                   
-    }                                                                           
-  }      
-
-  function handleNewGame() {
-    setGameState(createGame());
-  }
+    fetchGameState();
+  }, []);
 
   useEffect(() => {                                                            
-    if (winner) {                                                               
+    if (gameState?.winner) {                                                               
       confetti({                                                                
         particleCount: 100,                                                     
         spread: 70,                                                             
         origin: { y: 0.6 }                                                      
       });                                                                       
     }                                                                           
-  }, [winner]);
+  }, [gameState?.winner]);
+
+  if (gameState === null) {
+    return <div className="loading">Loading...</div>;
+  };
+
+  const { winner, isDraw, currentPlayer, board } = gameState;
+
+  const icons = { "X": <img src={serpentImg} />, "O": <img src={doveImg} /> };
+
+  async function handleCellClick(position: number) {  
+    try {
+      const response = await fetch("/api/move", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ position }),
+      });
+      const newGameState = await response.json();
+      setGameState(newGameState);
+    } catch (error) {
+        console.error('Error fetching game', error);
+    }                               
+  }      
+
+  async function handleNewGame() {
+    try {
+      const response = await fetch("/api/reset", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      const newGameState = await response.json();
+      setGameState(newGameState);
+    } catch (error) {
+      // Invalid moves silently ignored
+    }            
+  }
 
   return (
     <div className="game-container">
-      <h1>Tic Tac Serpent/Dove</h1>
+      <h1>Serpents & Doves</h1>
+      <p>a game of three in a row</p>
 
       <GameStatus winner={winner} isDraw={isDraw} currentPlayer={currentPlayer} />
 
