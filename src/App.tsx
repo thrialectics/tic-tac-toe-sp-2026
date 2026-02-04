@@ -46,7 +46,7 @@ function App() {
                 const position = row * 3 + col;                                     
                 return (                                                            
                   <td key={position} onClick={() => handleCellClick(position)}>     
-                    {board[position] ?? "_"}                              
+                    {board[position] ?? " "}                              
                   </td>                                                             
                 );                                                                  
               })}                                                                   
