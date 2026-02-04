@@ -15,67 +15,75 @@ export type GameState = {
   board: Board;
   currentPlayer: Player;
   winner: Player | null;
+  isDraw: boolean;
 };
+
+const WINNING_COMBOS = [
+  [0, 1, 2], [3, 4, 5], [6, 7, 8],  // rows
+  [0, 3, 6], [1, 4, 7], [2, 5, 8],  // columns
+  [0, 4, 8], [2, 4, 6],             // diagonals
+] as const;
 
 export function createGame(): GameState {
   return {
     board: [null, null, null, null, null, null, null, null, null],
     currentPlayer: "X",
     winner: null,
+    isDraw: false,
   };
 }
 
 export function makeMove(state: GameState, position: number): GameState {
+  // Validate position is an integer
+  if (!Number.isInteger(position)) {
+    throw new Error("Position must be an integer")
+  }
+  
+  // Validate position is in bounds
   if (position < 0 || position > 8) {                                           
     throw new Error("Position must be between 0 and 8");                        
   }
 
-  if (!Number.isInteger(position)) {
-    throw new Error("Position must be an integer")
-  }
-
+  // Validate position is not occupied
   if (state.board[position] !== null) {                                         
     throw new Error("Position is already occupied");                                            
   }
 
-  const winner = getWinner(state);
-  if (winner !== null) {
-    throw new Error("Game is already over");
+  // Validate game is not over
+  if (state.winner !== null) {
+    throw new Error("Game is already over")
   }
 
+  // Create new board with the move
   const newBoard = [...state.board] as Board;
   newBoard[position] = state.currentPlayer;
 
-  const newState: GameState = {
+  // Compute new state
+  const nextPlayer = state.currentPlayer === "X" ? "O" : "X";
+  const winner = computeWinner(newBoard);
+  const isDraw = winner === null && newBoard.every(cell => cell !== null);
+
+  return {
     board: newBoard,
-    currentPlayer: state.currentPlayer === "X" ? "O" : "X",
-    winner: null as (Player | null),
-  }
-
-  newState.winner = getWinner(newState);
-
-  return newState;
+    currentPlayer: nextPlayer,
+    winner,
+    isDraw,
+  };
 }
 
-export function isDraw(state: GameState): boolean {                           
-    return getWinner(state) === null && state.board.every(cell => cell !==      
-  null);                                                                        
-  }
-  
 export function getWinner(state: GameState): Player | null {
-  const board = state.board;
+  return state.winner;
+}
 
-  const winningCombos = [                                                       
-    [0, 1, 2], [3, 4, 5], [6, 7, 8],  // rows                                   
-    [0, 3, 6], [1, 4, 7], [2, 5, 8],  // columns                                
-    [0, 4, 8], [2, 4, 6]              // diagonals                              
-  ];
+export function isDraw(state: GameState): boolean {
+  return state.isDraw;
+}
 
-  for (const [a, b, c] of winningCombos) {
+function computeWinner(board: Board): Player | null {
+  for (const [a, b, c] of WINNING_COMBOS) {
     if (board[a] !== null && board[a] === board[b] && board[b] === board[c]) {
       return board[a];
     }
   }
-
   return null;
 }
