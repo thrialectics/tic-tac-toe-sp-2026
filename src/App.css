@@ -27,7 +27,7 @@ h1 {
 
 .current-player {
   font-family: Georgia, serif;
-  font-size: 20px;
+  font-size: 18px;
   color: #7b6d8d;
   margin: 10px 0;
 }
@@ -35,14 +35,14 @@ h1 {
 .winner {
   font-size: 28px;
   font-weight: bold;
-  color: #1a4a5e;
+  color: #7b6d8d;
   margin: 10px 0;
 }
 
 .draw {
   font-size: 24px;
   font-weight: bold;
-  color: #1a4a5e;
+  color: #7b6d8d;
   margin: 10px 0;
 }
 
@@ -53,8 +53,8 @@ table {
 }
 
 td {
-  width: 80px;
-  height: 80px;
+  width: 120px;
+  height: 120px;
   font-size: 48px;
   text-align: center;
   border: 1px solid #f5f3f0;
@@ -63,6 +63,11 @@ td {
 
 td:hover {
   background-color: #f0f0f0;
+}
+
+td img {
+  width: 90px;
+  height: 90px;
 }
 
 tr:first-child td:first-child {
