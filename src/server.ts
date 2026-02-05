@@ -22,4 +22,7 @@ app.get("/api/game", (_req, res) => {
     res.json(gameState);
 });
 
+// Export the app so tests can import it without starting the server
+export { app };
+
 ViteExpress.listen(app, 3000, () => console.log("Server is listening..."));
