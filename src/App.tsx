@@ -74,7 +74,7 @@ function App() {
   return (
     <div className="game-container">
       <h1>Serpents & Doves</h1>
-      <p>a game of three in a row</p>
+      <p><em>a game of three in a row</em></p>
 
       <GameStatus winner={winner} isDraw={isDraw} currentPlayer={currentPlayer} />
 
