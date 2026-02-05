@@ -12,6 +12,7 @@ export type Cell = Player | null;
 export type Board = [Cell, Cell, Cell, Cell, Cell, Cell, Cell, Cell, Cell];
 
 export type GameState = {
+  id: string;
   board: Board;
   currentPlayer: Player;
   winner: Player | null;
@@ -26,6 +27,7 @@ const WINNING_COMBOS = [
 
 export function createGame(): GameState {
   return {
+    id: crypto.randomUUID(),
     board: [null, null, null, null, null, null, null, null, null],
     currentPlayer: "X",
     winner: null,
@@ -64,6 +66,7 @@ export function makeMove(state: GameState, position: number): GameState {
   const isDraw = winner === null && newBoard.every(cell => cell !== null);
 
   return {
+    id: state.id,
     board: newBoard,
     currentPlayer: nextPlayer,
     winner,

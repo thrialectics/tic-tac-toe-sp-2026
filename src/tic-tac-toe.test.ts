@@ -24,6 +24,19 @@ describe("createGame", () => {
     const game = createGame();
     expect(game.currentPlayer).toBe("X");
   });
+
+  it("returns a game state with a unique id", () => {
+    const game = createGame();
+    expect(game.id).toBeDefined();
+    expect(typeof game.id).toBe("string");
+    expect(game.id.length).toBeGreaterThan(0);
+  });
+  
+  it("generates unique ids for different games", () => {
+    const game1 = createGame();
+    const game2 = createGame();
+    expect(game1.id).not.toBe(game2.id);
+  });
 });
 
 // ---------------------------------------------------------------------------
