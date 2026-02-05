@@ -26,7 +26,8 @@ app.post("/api/games/:id/move", (req, res) => {
       games.set(req.params.id, setGame);
       res.json(setGame);
     } catch (error) {
-      res.status(400).json({ error: error.message });
+      const message = error instanceof Error ? error.message : "Invalid move";
+      res.status(400).json({ error: message });
     }
 });
 
