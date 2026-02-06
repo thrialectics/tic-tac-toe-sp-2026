@@ -99,6 +99,6 @@ tr:last-child td:last-child {
   font-family: Georgia, serif;
 }
 
-.new-game-button:hover {
+.button:hover {
   background: #5d5273;
 }
