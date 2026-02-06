@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import confetti from "canvas-confetti";
 import type { GameState } from "./tic-tac-toe";
 import serpentImg from "./assets/serpent.png";
@@ -14,18 +14,28 @@ function GameView({
   onGameSelect: (id: string) => void;
 }) {
   const [gameState, setGameState] = useState<GameState | null>(null);
+  const wsRef = useRef<WebSocket | null>(null);
 
   useEffect(() => {
-    const fetchGame = async () => {
-      try {
-        const response = await fetch(`/api/games/${gameId}`);
-        const game = await response.json();
-        setGameState(game);
-      } catch (error) {
-        console.error('Error fetching game', error);
+    const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+    const ws = new WebSocket(`${protocol}//${window.location.host}/api/games/${gameId}/ws`);
+    wsRef.current = ws;
+
+    ws.onmessage = (event) => {
+      const data = JSON.parse(event.data);
+      if (data.type === 'gameUpdate') {
+        setGameState(data.gameState);
       }
     };
-    fetchGame();
+
+    ws.onerror = (error) => {
+      console.error('WebSocket error', error);
+    };
+
+    return () => {
+      ws.close();
+      wsRef.current = null;
+    };
   }, [gameId]);
 
   useEffect(() => {
