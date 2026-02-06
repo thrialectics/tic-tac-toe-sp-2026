@@ -47,4 +47,4 @@ app.get("/api/games/:id", (req, res) => {
 // Export the app so tests can import it without starting the server
 export { app };
 
-ViteExpress.listen(app, 3000, () => console.log("Server is listening..."));
+ViteExpress.listen(app, parseInt(process.env.PORT || "3000"), () => console.log("Server is listening..."));
