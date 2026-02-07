@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "bun run src/server.ts",
+    "start": "bun run src/server.ts",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
