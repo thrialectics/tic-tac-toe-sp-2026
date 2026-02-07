@@ -1,45 +1,31 @@
-# Tic Tac Toe Game
+# Serpents & Doves
 
-This is a turn-based, two-player game of Tic Tac Toe, created for the Fractal Tech AI Engineering bootcamp.
+A real-time multiplayer tic-tac-toe game. Created for the Fractal Tech AI Engineering bootcamp.
 
-## Installation
+## Setup
 
-### Clone the repo
 ```bash
 git clone https://github.com/thrialectics/tic-tac-toe-sp-2026.git
-```
-
-### Navigate into the project
-```bash
 cd tic-tac-toe-sp-2026
-```
-
-### Install dependencies
-```bash
 bun install
-```
-
-### Run the dev server
-```bash
 bun dev
 ```
 
-### Run tests
-```bash
-bun test
-```
+Open http://localhost:3000 in your browser.
 
-## Usage
-1. Open http://localhost:5173 in your browser
-2. Click any cell to place your mark
-3. Players alternate turns (X goes first)
-4. Get three in a row to win
+## How to Play
+
+1. Name and create a new game from the lobby
+2. Open the same URL in a second browser tab
+3. Take turns placing Serpents (X) and Doves (O)
+4. Three in a row wins — with confetti
+
+Games persist across server restarts. Open a game in multiple tabs to see real-time updates via WebSocket.
 
 ## Tech Stack
-React, TypeScript, Vite, Bun
 
-## Screenshots/Demo
-Coming Soon!
+React, TypeScript, Express, WebSocket, Vite, Bun
 
 ## License
-MIT 
+
+MIT
