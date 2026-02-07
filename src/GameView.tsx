@@ -108,9 +108,7 @@ function GameView({
         New Game
       </button>
 
-      <button onClick={onBackToLobby} className="button">
-        Back to Lobby
-      </button>
+      <span onClick={onBackToLobby} className="back-link">&#x21E0; Back to Lobby</span>
     </div>
   );
 }
@@ -132,7 +130,8 @@ function GameStatus({
   if (isDraw) {
     return <div className="draw">It's a draw!</div>;
   }
-  return <p className="current-player">Current Player: {names[currentPlayer]}</p>;
+  const playerClass = currentPlayer === "X" ? "current-player--serpent" : "current-player--dove";
+  return <p className={`current-player ${playerClass}`}>Current Player: {names[currentPlayer]}</p>;
 }
 
 export default GameView;
