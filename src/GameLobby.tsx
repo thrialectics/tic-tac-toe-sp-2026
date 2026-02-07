@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import type { GameState } from "./tic-tac-toe";
 import serpentImg from "./assets/serpent.png";
 import doveImg from "./assets/dove.png";
@@ -51,7 +51,7 @@ function GameLobby({ onGameSelect }: { onGameSelect: (id: string) => void }) {
     }
   }
 
-  const icons: Record<string, JSX.Element> = {
+  const icons: Record<string, React.ReactNode> = {
     "X": <img src={serpentImg} alt="Serpent" />,
     "O": <img src={doveImg} alt="Dove" />,
   };
