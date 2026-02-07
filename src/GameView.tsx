@@ -68,6 +68,8 @@ function GameView({
     try {
       const response = await fetch("/api/games", {
         method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({}),
       });
       const newGame = await response.json();
       onGameSelect(newGame.id);
