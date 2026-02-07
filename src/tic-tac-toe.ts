@@ -13,6 +13,7 @@ export type Board = [Cell, Cell, Cell, Cell, Cell, Cell, Cell, Cell, Cell];
 
 export type GameState = {
   id: string;
+  name: string;
   board: Board;
   currentPlayer: Player;
   winner: Player | null;
@@ -25,9 +26,10 @@ const WINNING_COMBOS = [
   [0, 4, 8], [2, 4, 6],             // diagonals
 ] as const;
 
-export function createGame(): GameState {
+export function createGame(name?: string): GameState {
   return {
     id: crypto.randomUUID(),
+    name: name || "Unnamed Game",
     board: [null, null, null, null, null, null, null, null, null],
     currentPlayer: "X",
     winner: null,
@@ -67,6 +69,7 @@ export function makeMove(state: GameState, position: number): GameState {
 
   return {
     id: state.id,
+    name: state.name,
     board: newBoard,
     currentPlayer: nextPlayer,
     winner,
