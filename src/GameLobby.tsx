@@ -7,6 +7,7 @@ function GameLobby({ onGameSelect }: { onGameSelect: (id: string) => void }) {
   const [games, setGames] = useState<GameState[]>([]);
   const [expandedGameId, setExpandedGameId] = useState<string | null>(null);
   const [newGameName, setNewGameName] = useState("");
+  const [nameError, setNameError] = useState(false);
 
   const fetchGames = async () => {
     try {
@@ -23,11 +24,16 @@ function GameLobby({ onGameSelect }: { onGameSelect: (id: string) => void }) {
   }, []);
 
   async function handleNewGame() {
+    if (!newGameName.trim()) {
+      setNameError(true);
+      return;
+    }
+    setNameError(false);
     try {
       const response = await fetch("/api/games", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name: newGameName.trim() || undefined }),
+        body: JSON.stringify({ name: newGameName.trim() }),
       });
       const newGame = await response.json();
       setNewGameName("");
@@ -109,9 +115,10 @@ function GameLobby({ onGameSelect }: { onGameSelect: (id: string) => void }) {
           className="new-game-input"
           placeholder="Name your game..."
           value={newGameName}
-          onChange={e => setNewGameName(e.target.value)}
+          onChange={e => { setNewGameName(e.target.value); setNameError(false); }}
           onKeyDown={e => e.key === "Enter" && handleNewGame()}
         />
+        {nameError && <span className="name-error">Please name your game first</span>}
         <button onClick={handleNewGame} className="button">New Game</button>
       </div>
       <span onClick={fetchGames} className="refresh-link">&#x21E3; Refresh Games</span>

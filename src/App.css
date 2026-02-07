@@ -247,6 +247,13 @@ tr:last-child td:last-child {
   outline: none;
 }
 
+.name-error {
+  color: #c47a7a;
+  font-family: Georgia, serif;
+  font-size: 0.85rem;
+  font-style: italic;
+}
+
 .new-game-input:focus {
   border-color: #7b6d8d;
 }
