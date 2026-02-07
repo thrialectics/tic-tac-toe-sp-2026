@@ -125,6 +125,7 @@ function GameStatus({
   currentPlayer: "X" | "O";
 }) {
   const names = { "X": "Serpent", "O": "Dove" };
+  const icons = { "X": <img src={serpentImg} alt="Serpent" />, "O": <img src={doveImg} alt="Dove" /> };
 
   if (winner) {
     return <div className="winner">Winner: {names[winner]}</div>;
@@ -133,7 +134,12 @@ function GameStatus({
     return <div className="draw">It's a draw!</div>;
   }
   const playerClass = currentPlayer === "X" ? "current-player--serpent" : "current-player--dove";
-  return <p className={`current-player ${playerClass}`}>Current Player: {names[currentPlayer]}</p>;
+  return (
+    <div className={`current-player ${playerClass}`}>
+      <p>Current Player:</p>
+      {icons[currentPlayer]}
+    </div>
+  );
 }
 
 export default GameView;

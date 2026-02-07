@@ -30,6 +30,18 @@ h1 {
   font-size: 18px;
   margin: 10px 0;
   text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.current-player img {
+  width: 60px;
+  height: 60px;
+}
+
+.current-player p {
+  margin: 0;
 }
 
 .current-player--serpent {
@@ -52,6 +64,7 @@ h1 {
   font-weight: bold;
   color: #7b6d8d;
   margin: 10px 0;
+  text-align: center;
 }
 
 table {
